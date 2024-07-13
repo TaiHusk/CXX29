@@ -10,6 +10,7 @@ To install the library, copy the `29` directory to your system's include directo
 cp -r ./29 /usr/include/c++/
 ```
 
+# `experimental/smart_view_vector`
 ## Usage
 
 To use the library, include the header file in your C++ source code:
@@ -41,7 +42,7 @@ int main() {
 }
 ```
 
-# `find()` `finfIndex()`
+## `find()` `finfIndex()`
 - `std::optional<T> find<T>(const std::vector<T>& vec, const std::function<bool(const T&)>& callback)`
 - `size_t findIndex<T>(const std::vector<T>& vec, const std::function<bool(const T&)>& callback)`
 
@@ -69,6 +70,149 @@ int result = smart_view_vector::findIndex(vec, std::function<bool(const int&)>([
 std::cout << result << std::endl;
 ```
 Both functions use a simple linear search algorithm, which has a time complexity of O(n), where n is the size of the vector. If the vector is sorted, a more efficient search algorithm such as binary search can be used to improve the performance.
+
+## `each()`
+The `each` function is a utility function that can be used to iterate over the elements in a vector and apply a callback function to each element.
+
+The `each` function takes a vector and a callback function as arguments. It iterates over the elements in the vector and applies the callback function to each element, passing the element, its index, and the entire vector as arguments to the callback function.
+
+Here is an example usage of the `each` function:
+```cpp
+std::vector<int> vec = {1, 2, 3, 4, 5};
+
+std::smart_view::vector::each(vec, std::function<void(const int&, const size_t&, const std::vector<int>&)>([](const int& num, const size_t& index, const std::vector<int>& vec) {
+    std::cout << "Element " << num << " at index " << index << " in vector " << smart_view_vector::to_string(vec) << std::endl;
+}));
+```
+This will output:
+```css
+Element 1 at index 0 in vector {1, 2, 3, 4, 5}
+Element 2 at index 1 in vector {1, 2, 3, 4, 5}
+Element 3 at index 2 in vector {1, 2, 3, 4, 5}
+Element 4 at index 3 in vector {1, 2, 3, 4, 5}
+Element 5 at index 4 in vector {1, 2, 3, 4, 5}
+```
+
+## `to_string()`
+The `each` function can be useful when you need to perform some operation on each element in a vector, but you don't need to modify the vector itself.
+
+The `to_string` function is a utility function that converts a vector to a string representation. The string representation consists of the elements of the vector enclosed in curly braces `{}` and separated by commas `,`.
+
+Here is an example usage of the `to_string` function:
+```cpp
+std::vector<int> vec = {1, 2, 3, 4, 5};
+std::string str = smart_view_vector::to_string(vec);
+std::cout << str << std::endl;  // Output: "{1, 2, 3, 4, 5}"
+```
+The `to_string` function can be useful when you need to convert a vector to a string for debugging or logging purposes.
+
+# `experimental/smart_view_string`
+## Usage
+
+To use the library, include the header file in your C++ source code:
+```cpp
+#include <c++/29/experimental/smart_view_string>
+```
+
+This is a header file for the `smart_view_string` namespace, which provides utility functions for working with `std::string` objects in C++. The header file is part of the GNU ISO C++ Library and is released under the terms of the GNU General Public License.
+
+The `smart_view_string` namespace contains the following functions:
+
+* `startsWith(const std::string &str, const std::string &prefix)`: Returns `true` if the `str` starts with the `prefix`, and `false` otherwise.
+* `endsWith(const std::string &str, const std::string &suffix)`: Returns `true` if the `str` ends with the `suffix`, and `false` otherwise.
+* `split(const std::string &str, char delimiter)`: Splits the `str` into a vector of substrings based on the `delimiter` character.
+
+Here is an example usage of these functions:
+```cpp
+#include <iostream>
+#include <vector>
+#include <c++/29/experimental/smart_view_string>
+
+int main() {
+    std::string str = "Hello, World!";
+
+    if (smart_view_string::startsWith(str, "Hello")) {
+        std::cout << "String starts with 'Hello'" << std::endl;
+    }
+
+    if (smart_view_string::endsWith(str, "World!")) {
+        std::cout << "String ends with 'World!'" << std::endl;
+    }
+
+    std::vector<std::string> tokens = smart_view_string::split(str, ',');
+    for (const auto& token : tokens) {
+        std::cout << token << std::endl;
+    }
+
+    return 0;
+}
+```
+This will output:
+```log
+String starts with 'Hello'
+String ends with 'World!'
+Hello
+ World!
+```
+
+# `experimental/smart_view`
+## Usage
+
+To use the library, include the header file in your C++ source code:
+```cpp
+#include <c++/29/experimental/smart_view>
+```
+
+This is a header file for the `smart_view` namespace, which is a part of the GNU ISO C++ Library. The `smart_view` namespace provides utility functions for working with `std::string` and `std::vector` objects in C++.
+
+The `smart_view` namespace contains two sub-namespaces:
+
+* `string`: Contains utility functions for working with `std::string` objects.
+* `vector`: Contains utility functions for working with `std::vector` objects.
+
+The `smart_view` namespace is included in the `std` namespace, so you can access its functions directly through the `std::smart_view` namespace.
+
+Here is an example usage of the `smart_view` namespace:
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+#include <c++/29/experimental/smart_view>
+
+int main() {
+    std::string str = "Hello, World!";
+
+    if (std::smart_view::string::startsWith(str, "Hello")) {
+        std::cout << "String starts with 'Hello'" << std::endl;
+    }
+
+    if (std::smart_view::string::endsWith(str, "World!")) {
+        std::cout << "String ends with 'World!'" << std::endl;
+    }
+
+    std::vector<std::string> tokens = std::smart_view::string::split(str, ',');
+    for (const auto& token : tokens) {
+        std::cout << token << std::endl;
+    }
+
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+
+    std::optional<int> result = std::smart_view::vector::find(vec, std::function<bool(const int&)>([](const int& num) { return num % 2 == 0; }));
+    if (result.has_value()) {
+        std::cout << "First even number is " << *result << std::endl;
+    }
+
+    return 0;
+}
+```
+This will output:
+```log
+String starts with 'Hello'
+String ends with 'World!'
+Hello
+ World!
+First even number is 2
+```
 
 ## License
 
