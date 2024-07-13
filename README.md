@@ -85,7 +85,7 @@ std::smart_view::vector::each(vec, std::function<void(const int&, const size_t&,
 }));
 ```
 This will output:
-```css
+```log
 Element 1 at index 0 in vector {1, 2, 3, 4, 5}
 Element 2 at index 1 in vector {1, 2, 3, 4, 5}
 Element 3 at index 2 in vector {1, 2, 3, 4, 5}
