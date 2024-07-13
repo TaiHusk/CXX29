@@ -41,6 +41,35 @@ int main() {
 }
 ```
 
+# `find()` `finfIndex()`
+- `std::optional<T> find<T>(const std::vector<T>& vec, const std::function<bool(const T&)>& callback)`
+- `size_t findIndex<T>(const std::vector<T>& vec, const std::function<bool(const T&)>& callback)`
+
+The `find` and `findIndex` functions are utility functions that can be used to search for an element in a vector that satisfies a given condition.
+
+The `find` function takes a vector and a callback function as arguments. It iterates over the elements in the vector and applies the callback function to each element. The `find` function now returns an `std::optional<T>`. This allows the function to return the actual element that satisfies the condition, or `std::nullopt` if no such element is found.
+
+Here is an example usage of the `find` function:
+```cpp
+std::vector<int> vec = {1, 2, 3, 4, 5};
+auto result = smart_view_vector::find(vec, std::function<bool(const int&)>([](const int& num) { return num > 3; }));
+
+if (result) {
+    std::cout << *result << std::endl; // will return 4
+} else {
+    std::cout << "No match found" << std::endl;
+}
+```
+The `findIndex` function is similar to the `find` function, but instead of returning the element that satisfies the condition, it returns the index of that element in the vector. If no element satisfies the condition, it returns `-1`.
+
+Here is an example usage of the `findIndex` function:
+```cpp
+std::vector<int> vec = {1, 2, 3, 4, 5};
+int result = smart_view_vector::findIndex(vec, std::function<bool(const int&)>([](const int& num) { return num < 3; }));
+std::cout << result << std::endl;
+```
+Both functions use a simple linear search algorithm, which has a time complexity of O(n), where n is the size of the vector. If the vector is sorted, a more efficient search algorithm such as binary search can be used to improve the performance.
+
 ## License
 
 This library is distributed under the GNU General Public License, version 3 or later.

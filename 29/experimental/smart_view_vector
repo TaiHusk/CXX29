@@ -29,22 +29,19 @@
 
 #pragma GCC system_header
 
-// #include <bits/requires_hosted.h> // for std::string
-
 #include <iostream>
 #include <functional>
 #include <vector>
+#include <optional>
 
 #include <bits/c++config.h>
-
-// #if __cplusplus >= 202902L
 
 namespace smart_view_vector _GLIBCXX_VISIBILITY(default) 
 {
 _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
     template <typename T>
-    static bool includes(const std::vector<T>& vec, const bool& value) {
+    static bool includes(const std::vector<T>& vec, const T& value) {
         for (auto &&item : vec) {
             if ((bool*)(item == value)) return true;
         }
@@ -62,7 +59,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     }
 
     template<typename T>
-    static bool every(const std::vector<T>& vec, const bool& value) {
+    static bool every(const std::vector<T>& vec, const T& value) {
         std::vector<bool> bools;
 
         for (auto &&item : vec) {
@@ -81,6 +78,32 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
         }
 
         return vec.size() == bools.size();
+    }
+
+    template<typename T>
+    static std::optional<T> find(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
+        size_t count = vec.size();
+
+        for (size_t i = 0; i < count; i++)
+        {
+            T item = vec[i];
+            if (callback(item)) return item;
+        }
+        
+        return std::nullopt;
+    }
+
+    template<typename T>
+    static size_t findIndex(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
+        size_t count = vec.size();
+
+        for (size_t i = 0; i < count; i++)
+        {
+            T item = vec[i];
+            if (callback(item)) return i;
+        }
+        
+        return -1;
     }
 
     template <typename T>
