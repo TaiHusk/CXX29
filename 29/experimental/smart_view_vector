@@ -61,24 +61,20 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
     template<typename T>
     static bool every(const std::vector<T>& vec, const T& value) {
-        std::vector<bool> bools;
-
         for (auto &&item : vec) {
-            if ((bool*)(item == value)) bools.push_back(true);
+            if ((bool*)(item != value)) return false;
         }
 
-        return vec.size() == bools.size();
+        return true;
     }
 
     template<typename T>
     static bool every(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
-        std::vector<bool> bools;
-
         for (auto &&item : vec) {
-            if (callback(item)) bools.push_back(true);
+            if (callback(item) == false) return false;
         }
 
-        return vec.size() == bools.size();
+        return true;
     }
 
     template<typename T>
