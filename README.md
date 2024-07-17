@@ -42,7 +42,7 @@ int main() {
 }
 ```
 
-## `find()` `finfIndex()`
+## `find()` `findIndex()`
 - `std::optional<T> find<T>(const std::vector<T>& vec, const std::function<bool(const T&)>& callback)`
 - `size_t findIndex<T>(const std::vector<T>& vec, const std::function<bool(const T&)>& callback)`
 
@@ -70,6 +70,17 @@ int result = smart_view_vector::findIndex(vec, std::function<bool(const int&)>([
 std::cout << result << std::endl;
 ```
 Both functions use a simple linear search algorithm, which has a time complexity of O(n), where n is the size of the vector. If the vector is sorted, a more efficient search algorithm such as binary search can be used to improve the performance.
+
+## `filter()`
+The `filter` function is a utility function that creates a new vector containing only the elements from the original vector that satisfy a given condition. The condition is specified using a callback function.
+
+Here is an example usage of the `filter` function:
+```cpp
+std::vector<int> vec = {1, 2, 3, 4, 5};
+std::vector<int> filtered_vec = smart_view_vector::filter(vec, std::function<bool(const int&)>([](const int& num) { return num % 2 == 0; }));
+std::cout << smart_view_vector::to_string(filtered_vec) << std::endl;  // Output: "{2, 4}"
+```
+The `filter` function can be useful when you need to extract a subset of elements from a vector based on some condition.
 
 ## `each()`
 The `each` function is a utility function that can be used to iterate over the elements in a vector and apply a callback function to each element.

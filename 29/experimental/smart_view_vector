@@ -103,6 +103,17 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
         return -1;
     }
 
+    template<typename T>
+    static inline std::vector<T> filter(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
+        std::vector<T> _vec;
+
+        for (const T& item : vec) {
+            if (callback(item)) _vec.push_back(item);
+        }
+        
+        return _vec;
+    }
+
     template<typename T> 
     static inline void each(const std::vector<T>& vec, std::function<void(const T&, const size_t&, const std::vector<T>&)> callback) {
         size_t count = vec.size();
