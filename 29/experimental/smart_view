@@ -46,6 +46,4 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 _GLIBCXX_END_NAMESPACE_VERSION
 } // namespace
 
-// std::smart_view::smart_view_string::
-
 #endif /* _GLIBCXX_EXPERIMENTAL_SMART_VIEW */

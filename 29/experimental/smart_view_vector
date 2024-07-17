@@ -42,7 +42,7 @@ namespace smart_view_vector _GLIBCXX_VISIBILITY(default)
 _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
     template <typename T>
-    static bool includes(const std::vector<T>& vec, const T& value) {
+    static inline bool includes(const std::vector<T>& vec, const T& value) {
         for (auto &&item : vec) {
             if ((bool*)(item == value)) return true;
         }
@@ -51,7 +51,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     }
 
     template <typename T>
-    static bool includes(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
+    static inline bool includes(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
         for (const T& item : vec) {
             if (callback(item)) return true;
         }
@@ -60,7 +60,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     }
 
     template<typename T>
-    static bool every(const std::vector<T>& vec, const T& value) {
+    static inline bool every(const std::vector<T>& vec, const T& value) {
         for (auto &&item : vec) {
             if ((bool*)(item != value)) return false;
         }
@@ -69,7 +69,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     }
 
     template<typename T>
-    static bool every(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
+    static inline bool every(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
         for (auto &&item : vec) {
             if (callback(item) == false) return false;
         }
@@ -78,7 +78,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     }
 
     template<typename T>
-    static std::optional<T> find(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
+    static inline std::optional<T> find(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
         size_t count = vec.size();
 
         for (size_t i = 0; i < count; i++)
@@ -91,7 +91,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     }
 
     template<typename T>
-    static size_t findIndex(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
+    static inline size_t findIndex(const std::vector<T>& vec, const std::function<bool(const T&)>& callback) {
         size_t count = vec.size();
 
         for (size_t i = 0; i < count; i++)
@@ -104,7 +104,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     }
 
     template<typename T> 
-    static void each(const std::vector<T>& vec, std::function<void(const T&, const size_t&, const std::vector<T>&)> callback) {
+    static inline void each(const std::vector<T>& vec, std::function<void(const T&, const size_t&, const std::vector<T>&)> callback) {
         size_t count = vec.size();
 
         for (size_t i = 0; i < count; i++) {
@@ -113,7 +113,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     }
 
     template<typename T>
-    static std::string to_string(const std::vector<T>& vec) {
+    static inline std::string to_string(const std::vector<T>& vec) {
         std::stringstream stringstream;
         stringstream << "{";
 
@@ -130,7 +130,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
     }
 
     template <typename T>
-    static void print(const std::vector<T>& vec) {
+    static inline void print(const std::vector<T>& vec) {
         std::cout << "{";
         for (auto &&item : vec) std::cout << item << ", ";
         std::cout << "}\n";

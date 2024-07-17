@@ -38,15 +38,15 @@ namespace smart_view_string _GLIBCXX_VISIBILITY(default)
 {
 _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
-    bool startsWith(const std::string &str, const std::string &prefix) {
+    inline bool startsWith(const std::string &str, const std::string &prefix) {
         return str.compare(0, prefix.length(), prefix) == 0;
     }
 
-    bool endsWith(const std::string &str, const std::string &suffix) {
+    inline bool endsWith(const std::string &str, const std::string &suffix) {
         return str.size() >= suffix.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
     }
 
-    std::vector<std::string> split(const std::string &str, char delimiter) {
+    inline std::vector<std::string> split(const std::string &str, char delimiter) {
         std::vector<std::string> tokens;
         std::string token;
 
