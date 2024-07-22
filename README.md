@@ -2,6 +2,12 @@
 
 This is a C++ Library header for the upcoming C++29 standard, providing a set of utility functions for working with `std::vector`. The library is currently in the experimental stage and is subject to change.
 
+## Headers
+- [`experimental/smart_view_vector`](#experimentalsmart_view_vector)
+- [`experimental/smart_view_string`](#experimentalsmart_view_string)
+- [`experimental/smart_view`](#experimentalsmart_view)
+- [`reflect`](#reflect)
+
 ## Installation
 
 To install the library, copy the `29` directory to your system's include directory:
@@ -225,10 +231,70 @@ Hello
 First even number is 2
 ```
 
+# `reflect`
+## Usage
+
+To use the library, include the header file in your C++ source code:
+```cpp
+#include <c++/29/reflect>
+```
+
+This is a header file for a `reflect` class that provides a set of static member functions for performing runtime type identification and downcasting of polymorphic objects. The class is designed to be used in a C++29 environment, as indicated by the `__cxx29` namespace.
+
+The `reflect` class has three template functions called `construct`. Each function takes a pointer or reference to an object of some abstract type `_Abstract` and attempts to dynamic cast it to a pointer of type `T`.
+
+The first function takes a pointer to an object, the second function takes a reference to an object, and the third function takes a `unique_ptr` to an object.
+
+If the dynamic cast is successful, the function returns a pointer to the object of type `T`. If the dynamic cast fails, the function returns a null pointer.
+
+> [!TIP]
+> The `reflect` class can be useful when you need to perform runtime polymorphism and you want to avoid using `dynamic_cast` directly in your code. By using the `reflect` class, you can centralize all the dynamic casting in one place and make your code more readable and maintainable.
+
+To use the `reflect` class, you can include the header file in your source code and use the `construct` function. Here is an example usage:
+```cpp
+#include <iostream>
+#include <memory>
+#include <c++/29/reflect>
+
+class Shape {
+public:
+    virtual ~Shape() {}
+    virtual void draw() const = 0;
+};
+
+class Circle : public Shape {
+public:
+    void draw() const override {
+        std::cout << "Drawing a circle" << std::endl;
+    }
+};
+
+class Square : public Shape {
+public:
+    void draw() const override {
+        std::cout << "Drawing a square" << std::endl;
+    }
+};
+
+int main() {
+    std::unique_ptr<Shape> shape = std::make_unique<Circle>();
+    const Circle* circle = std::reflect::construct<Circle>(shape);
+
+    if (circle != nullptr) {
+        circle->draw();  // Output: "Drawing a circle"
+    }
+
+    std::unique_ptr<Shape> shape2 = std::make_unique<Square>();
+    const Circle* circle2 = std::reflect::construct<Circle>(shape2);
+    
+    if (circle2 != nullptr) {
+        circle2->draw();  // This code will not be executed because the dynamic cast will fail
+    }
+
+    return 0;
+}
+```
+In this example, we have an abstract class `Shape` and two concrete classes `Circle` and `Square` that inherit from `Shape`. We use the `reflect::construct` function to dynamic cast a `unique_ptr<Shape>` to a `Circle*`. If the dynamic cast is successful, we call the `draw` function on the `Circle` object. If the dynamic cast fails, we do nothing.
+
 ## License
-
 This library is distributed under the GNU General Public License, version 3 or later.
-
-## Disclaimer
-
-This library is in the experimental stage and is subject to change. Use it at your own risk.
