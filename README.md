@@ -7,6 +7,7 @@ This is a C++ Library header for the upcoming C++29 standard, providing a set of
 - [`experimental/smart_view_string`](#experimentalsmart_view_string)
 - [`experimental/smart_view`](#experimentalsmart_view)
 - [`reflect`](#reflect)
+- [`vector_ptr`](#vector_ptr)
 
 ## Installation
 
@@ -296,5 +297,93 @@ int main() {
 ```
 In this example, we have an abstract class `Shape` and two concrete classes `Circle` and `Square` that inherit from `Shape`. We use the `reflect::construct` function to dynamic cast a `unique_ptr<Shape>` to a `Circle*`. If the dynamic cast is successful, we call the `draw` function on the `Circle` object. If the dynamic cast fails, we do nothing.
 
-## License
+# `vector_ptr`
+## Usage
+
+To use the library, include the header file in your C++ source code:
+```cpp
+#include <c++/29/vector_ptr>
+```
+## Overview
+The `vector_ptr` library is part of the GNU ISO C++ Library, designed to handle heterogeneous collections of pointers in a type-safe manner. This library facilitates the storage of pointers to objects of different types in a single container, while providing mechanisms to safely cast them back to their original types.
+
+## Features
+* **Dynamically Adding Pointers:**  The `push_back()` method allows you to add pointers of various types (including raw pointers, `std::unique_ptr`, `std::shared_ptr`, and `std::weak_ptr`) to the vector.
+* **Type-Safe Access:** The `get()` method provides type-safe access to the pointers stored in the vector, preventing potential runtime errors.
+* **Resource Management:** The destructor of `vector_ptr` automatically deletes the objects pointed to by the stored pointers, ensuring proper resource cleanup.
+
+## Requirements
+- C++17 or higher
+- GCC 10.1 or later (for complete C++20 support)
+- Standard Template Library (STL)
+
+### Example with [`reflect`](#reflect)
+The example utilizes the `reflect` library to create a `const` reference to the `Circle` object. This allows you to access the `draw()` method of the `Circle` object without needing to worry about potential memory issues.
+```cpp
+#include <iostream>
+#include <memory>
+
+#include <c++/29/experimental/smart_view>
+#include <c++/29/reflect>
+#include <c++/29/vector_ptr>
+
+class Shape {
+public:
+    virtual ~Shape() {}
+    virtual void draw() const = 0;
+};
+
+class Circle : public Shape {
+public:
+    void draw() const override {
+        std::cout << "Drawing a circle" << std::endl;
+    }
+};
+
+class Square : public Shape {
+public:
+    void draw() const override {
+        std::cout << "Drawing a square" << std::endl;
+    }
+};
+
+int main() {
+    std::vector_ptr vp;
+
+    std::unique_ptr<Shape> shape = std::make_unique<Circle>();
+    vp.push_back(shape);
+
+    try {
+        Circle* circlePtr = vp.get<0, Circle>();
+        const Circle* circle = std::reflect::construct<Circle>(circlePtr);
+
+        circle->draw();
+
+    } catch (const std::out_of_range& e) {
+        std::cerr << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "An error occurred: " << e.what() << std::endl;
+    }
+};
+```
+
+> [!TIP]
+> * **Memory Management:** When using raw pointers with `vector_ptr`, ensure that the objects are properly allocated and deallocated.  The `vector_ptr` destructor will handle deleting the objects, but you need to be responsible for creating them.
+> * **Error Handling:** The `get()` method throws an `out_of_range` exception if the index is invalid. It's crucial to handle this exception in your code.
+
+
+## Full Technique
+Here's a breakdown of the `vector_ptr` technique:
+
+* **Purpose:** The `vector_ptr` class serves as a container for managing pointers to objects, providing a safe and efficient way to store and access these pointers.
+* **Benefits:**  
+    * **Type Safety:**  The `get()` method ensures type safety during access, preventing potential runtime errors.
+    * **Resource Management:**  The destructor automatically deallocates the objects pointed to, avoiding memory leaks.
+    * **Flexibility:**  It allows storing various pointer types (raw pointers, smart pointers) in a single container.
+* **Use Cases:**  The `vector_ptr` technique is particularly useful in scenarios where you need to store pointers to a collection of objects and perform operations on them. This could involve:
+    * **Managing a pool of objects:**  This is useful for scenarios like object caching or resource management.
+    * **Implementing a factory pattern:**  You can store pointers to different object factories.
+    * **Maintaining a list of objects:**  You can use `vector_ptr` to store pointers to objects in a list and efficiently iterate over them.
+
+# License
 This library is distributed under the GNU General Public License, version 3 or later.
