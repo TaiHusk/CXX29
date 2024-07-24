@@ -53,6 +53,34 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
         inline static const T* construct(const class std::unique_ptr<_Abstract>& _class) {
             return dynamic_cast<const T*>(_class.get());
         };
+
+        template<typename TargetType, typename BaseType>
+        static constexpr TargetType* ownership(BaseType* base) noexcept {
+            if constexpr (std::is_const_v<BaseType>) {
+                return dynamic_cast<const TargetType*>(base);
+            } else {
+                return dynamic_cast<TargetType*>(base);
+            }
+        };
+
+        template<typename TargetType, typename BaseType>
+        static constexpr const TargetType* ownership(const BaseType* base) noexcept {
+            return dynamic_cast<const TargetType*>(base);
+        };
+
+        template<typename TargetType, typename BaseType>
+        static constexpr TargetType* ownership(std::unique_ptr<BaseType>& base) noexcept {
+            if constexpr (std::is_const_v<BaseType>) {
+                return dynamic_cast<const TargetType*>(base.get());
+            } else {
+                return dynamic_cast<TargetType*>(base.get());
+            }
+        };
+
+        template<typename TargetType, typename BaseType>
+        static constexpr const TargetType* ownership(const std::unique_ptr<BaseType>& base) noexcept {
+            return dynamic_cast<const TargetType*>(base.get());
+        };
     };
 
     namespace __cxx29 {

@@ -7,6 +7,8 @@ This is a C++ Library header for the upcoming C++29 standard, providing a set of
 - [`experimental/smart_view_string`](#experimentalsmart_view_string)
 - [`experimental/smart_view`](#experimentalsmart_view)
 - [`reflect`](#reflect)
+  - [`reflect::construct`](#reflect-construct)
+  - [`reflect::ownership`](#reflect-ownership)
 - [`vector_ptr`](#vector_ptr)
 
 ## Installation
@@ -242,6 +244,9 @@ To use the library, include the header file in your C++ source code:
 
 This is a header file for a `reflect` class that provides a set of static member functions for performing runtime type identification and downcasting of polymorphic objects. The class is designed to be used in a C++29 environment, as indicated by the `__cxx29` namespace.
 
+<a id="reflect-construct"></a>
+
+## `construct()`
 The `reflect` class has three template functions called `construct`. Each function takes a pointer or reference to an object of some abstract type `_Abstract` and attempts to dynamic cast it to a pointer of type `T`.
 
 The first function takes a pointer to an object, the second function takes a reference to an object, and the third function takes a `unique_ptr` to an object.
@@ -296,6 +301,151 @@ int main() {
 }
 ```
 In this example, we have an abstract class `Shape` and two concrete classes `Circle` and `Square` that inherit from `Shape`. We use the `reflect::construct` function to dynamic cast a `unique_ptr<Shape>` to a `Circle*`. If the dynamic cast is successful, we call the `draw` function on the `Circle` object. If the dynamic cast fails, we do nothing.
+
+<a id="reflect-ownership"></a>
+
+## `ownership()`
+### What is `ownership()` ?
+
+The `ownership` method is designed to perform dynamic type casting (dynamic cast) of objects managed by smart pointers or regular pointers. It allows for the safe conversion of a pointer to a base class into a pointer to a derived class, if possible.
+
+### What does the `ownership` method do?
+
+The `ownership` method uses `dynamic_cast` to convert a pointer to a base class into a pointer to a derived class. If the conversion is possible, the method returns a pointer to the derived class. If the conversion is not possible (for example, if the object is not an instance of the derived class), the method returns `nullptr`.
+
+The `ownership` method supports both const and non-const pointers, as well as smart pointers. It considers the constness of the input pointer and returns the corresponding pointer type (const or non-const).
+
+### What is the `ownership` method intended for?
+
+The `ownership` method is intended for performing dynamic type casting and supporting both const and non-const pointers, as well as smart pointers. It allows for the safe conversion of a pointer to a base class into a pointer to a derived class, if possible. This is particularly useful in scenarios where access to the methods and data of the derived class is needed, which are not accessible through the base class interface.
+
+### Useful `operations` with `ownership`
+1. **Access to derived class methods**: The `ownership` method allows access to the methods of the derived class, which are not accessible through the base class interface.
+2. **Support for constness**: The `ownership` method supports both const and non-const pointers, making it more versatile.
+3. **Support for smart pointers**: The `ownership` method supports smart pointers, making it safer and more convenient to use in modern C++ programs.
+
+### Differences between `construct` and `ownership`
+1. **Constness**:
+    - The `construct` methods always return a const pointer (`const T*`).
+    - The `ownership` methods consider the constness of the input pointer and return the corresponding pointer type (const or non-const).
+
+2. **Versatility**:
+    - The `construct` methods are less versatile since they always return a const pointer.
+    - The `ownership` methods are more versatile since they support both const and non-const pointers, as well as smart pointers.
+
+3. **Use of `constexpr` and `noexcept`**:
+    - The `ownership` methods use `constexpr` and `noexcept`, which can improve code performance and safety.
+    - The `construct` methods do not use `constexpr` and `noexcept`.
+
+### Overview of using `construct` and `ownership` methods with an example
+Take a look at an example of using the `construct` and `ownership` methods to perform dynamic type casting and access methods of a derived class.
+```cpp
+#include <iostream>
+#include <memory>
+#include <c++/29/reflect>
+
+class Shape {
+public:
+    virtual ~Shape() {}
+    virtual void draw() const = 0;
+};
+
+class Circle : public Shape {
+public:
+    void draw() const override {
+        std::cout << "Drawing a circle" << std::endl;
+    }
+
+    void circleSpecificMethod() const {
+        std::cout << "Circle-specific method called" << std::endl;
+    }
+};
+
+class Square : public Shape {
+public:
+    void draw() const override {
+        std::cout << "Drawing a square" << std::endl;
+    }
+};
+
+int main() {
+    // Create a unique_ptr to manage a Circle object
+    std::unique_ptr<Shape> shape = std::make_unique<Circle>();
+
+    // Use the ownership function to perform a dynamic cast
+    const Circle* circlePtr = std::reflect::ownership<Circle>(std::reflect::construct<Shape>(shape));
+
+    if (circlePtr != nullptr) {
+        circlePtr->draw();
+        circlePtr->circleSpecificMethod(); // This method is specific to Circle
+    }
+
+    // Create another unique_ptr to manage a Circle object
+    std::unique_ptr<Shape> anotherShape = std::make_unique<Circle>();
+
+    // Use the ownership function to perform a dynamic cast
+    const Circle* anotherCirclePtr = std::reflect::ownership<Circle>(anotherShape);
+
+    if (anotherCirclePtr != nullptr) {
+        anotherCirclePtr->draw();
+        anotherCirclePtr->circleSpecificMethod(); // This method is specific to Circle
+    }
+};
+```
+
+Output:
+```plaintext
+Drawing a circle
+Circle-specific method called
+Drawing a circle
+Circle-specific method called
+```
+
+<details>
+<summary>Explanation of the example</summary>
+
+## Explanation of the example
+
+1. **Creating an object**:
+    - A smart pointer `std::unique_ptr<Shape>` is created to manage a `Circle` class object.
+
+2. **Using the `construct` method**:
+    - The `construct` method is used to perform dynamic type casting from `std::unique_ptr<Shape>` to `const Shape*`.
+    - This step is necessary to obtain a pointer to the base class `Shape`.
+
+3. **Using the `ownership` method**:
+    - The `ownership` method is used to perform dynamic type casting from `const Shape*` to `const Circle*`.
+    - This step allows obtaining a pointer to the derived class `Circle`.
+
+4. **Checking and calling methods**:
+    - It is checked that the `circlePtr` pointer is not `nullptr`.
+    - If the pointer is not `nullptr`, the `draw` and `circleSpecificMethod` methods of the `Circle` class object are called.
+
+## Explanation of the key code section
+
+```cpp
+const Circle* circlePtr = std::reflect::ownership<Circle>(std::reflect::construct<Shape>(shape));
+```
+
+This code section demonstrates the combined use of the `construct` and `ownership` methods to perform dynamic type casting. Let's break it down step by step:
+
+1. **Calling the `construct` method**:
+    - The `construct` method takes a smart pointer `std::unique_ptr<Shape>` and performs dynamic type casting to `const Shape*`.
+    - This allows obtaining a pointer to the base class `Shape`.
+
+2. **Calling the `ownership` method**:
+    - The `ownership` method takes a pointer `const Shape*` and performs dynamic type casting to `const Circle*`.
+    - This allows obtaining a pointer to the derived class `Circle`.
+
+</details>
+
+---
+
+> [!NOTE]
+> Thus, the combined use of the `construct` and `ownership` methods enables safe and convenient dynamic type casting and access to derived class methods.
+
+### Conclusion
+This example demonstrates how the `construct` and `ownership` methods can be used together to perform dynamic type casting and access derived class methods. The `construct` method is used to obtain a pointer to the base class, while the `ownership` method is used to obtain a pointer to the derived class. This approach allows for safe and convenient handling of objects managed by smart pointers.
 
 # `vector_ptr`
 ## Usage
